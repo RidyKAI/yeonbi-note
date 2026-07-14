@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f766e">
+<title>연비 노트</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛽</text></svg>">
+<style>
+  :root{
+    --bg:#f4f6f8; --card:#ffffff; --ink:#1a2230; --sub:#6b7684;
+    --line:#e6eaef; --brand:#0f766e; --brand2:#14b8a6;
+    --accent:#4054E7; --danger:#e5484d; --good:#0f9d58;
+    --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0e1116; --card:#171b22; --ink:#e8ecf1; --sub:#9aa4b2;
+      --line:#252b34; --brand:#2dd4bf; --brand2:#14b8a6;
+      --shadow:0 1px 3px rgba(0,0,0,.4);
+    }
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",Roboto,sans-serif;
+    line-height:1.5;padding:0 0 40px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:520px;margin:0 auto;padding:0 16px}
+
+  /* Header */
+  header{padding:22px 0 8px;text-align:center}
+  header h1{font-size:20px;margin:0;letter-spacing:-.02em;font-weight:800}
+  header .mode{margin-top:10px;display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px;box-shadow:var(--shadow)}
+  header .mode button{border:0;background:transparent;color:var(--sub);font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer}
+  header .mode button.on{background:var(--brand);color:#fff}
+
+  /* Dashboard */
+  .dash{
+    background:linear-gradient(135deg,var(--brand),var(--brand2));
+    color:#fff;border-radius:20px;padding:20px 18px;margin:14px 0 18px;
+    box-shadow:0 8px 24px rgba(15,118,110,.28);
+  }
+  .dash .big-label{font-size:12px;opacity:.85;font-weight:600;letter-spacing:.02em}
+  .dash .big-val{font-size:44px;font-weight:800;line-height:1.05;margin-top:2px;letter-spacing:-.03em}
+  .dash .big-val small{font-size:16px;font-weight:700;opacity:.9;margin-left:4px}
+  .dash .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+  .dash .cell{background:rgba(255,255,255,.14);border-radius:12px;padding:10px 8px;text-align:center}
+  .dash .cell .n{font-size:16px;font-weight:800;letter-spacing:-.02em}
+  .dash .cell .k{font-size:10.5px;opacity:.85;margin-top:2px;font-weight:600}
+
+  /* Form */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+  form.card{padding:16px;margin-bottom:18px}
+  form h2{font-size:13px;margin:0 0 12px;color:var(--sub);font-weight:700;letter-spacing:.02em}
+  .field{margin-bottom:11px}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:5px}
+  .field label .hint{font-weight:500;opacity:.8}
+  .field input{
+    width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);
+    border-radius:11px;padding:12px 13px;font-size:16px;font-weight:600;outline:none;
+  }
+  .field input:focus{border-color:var(--brand)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .save-btn{
+    width:100%;border:0;background:var(--brand);color:#fff;font-size:15px;font-weight:800;
+    padding:14px;border-radius:12px;cursor:pointer;margin-top:4px;letter-spacing:.01em;
+  }
+  .save-btn:active{transform:scale(.99)}
+
+  /* List */
+  .list-head{display:flex;justify-content:space-between;align-items:center;margin:4px 4px 10px}
+  .list-head h2{font-size:14px;margin:0;font-weight:800}
+  .list-head .cnt{font-size:12px;color:var(--sub);font-weight:600}
+  .rec{padding:13px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+  .rec .date{font-size:12px;color:var(--sub);font-weight:700;min-width:52px}
+  .rec .mid{flex:1;min-width:0}
+  .rec .mid .l1{font-size:13px;font-weight:700}
+  .rec .mid .l2{font-size:11.5px;color:var(--sub);margin-top:2px}
+  .rec .eff{text-align:right;min-width:70px}
+  .rec .eff .v{font-size:19px;font-weight:800;color:var(--good);letter-spacing:-.02em}
+  .rec .eff .v.base{color:var(--sub);font-size:12px;font-weight:700}
+  .rec .eff .u{font-size:10px;color:var(--sub);font-weight:600}
+  .rec .del{border:0;background:transparent;color:var(--sub);font-size:18px;cursor:pointer;padding:2px 4px;opacity:.5}
+  .rec .del:active{opacity:1}
+  .empty{text-align:center;color:var(--sub);font-size:13px;padding:36px 10px;line-height:1.7}
+  .tip{font-size:11.5px;color:var(--sub);text-align:center;margin:16px 8px 0;line-height:1.6}
+  .tip b{color:var(--brand)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>⛽ 연비 노트</h1>
+    <div class="mode" id="mode">
+      <button data-m="odo" class="on">계기판 총거리</button>
+      <button data-m="trip">구간거리(트립)</button>
+    </div>
+  </header>
+
+  <!-- Dashboard -->
+  <div class="dash">
+    <div class="big-label">전체 평균 연비</div>
+    <div class="big-val"><span id="avg">—</span><small>km/L</small></div>
+    <div class="grid">
+      <div class="cell"><div class="n" id="totDist">0</div><div class="k">총 주행 (km)</div></div>
+      <div class="cell"><div class="n" id="totFuel">0</div><div class="k">총 주유 (L)</div></div>
+      <div class="cell"><div class="n" id="totCost">0</div><div class="k">총 주유비 (원)</div></div>
+    </div>
+  </div>
+
+  <!-- Input form -->
+  <form class="card" id="form">
+    <h2>새 주유 기록</h2>
+    <div class="field">
+      <label>날짜</label>
+      <input type="date" id="f-date" required>
+    </div>
+    <div class="field" id="wrap-odo">
+      <label>계기판 총 주행거리 <span class="hint">(km, 계기판 숫자 그대로)</span></label>
+      <input type="number" id="f-odo" inputmode="decimal" placeholder="예: 12540" step="any">
+    </div>
+    <div class="field" id="wrap-trip" style="display:none">
+      <label>이번 구간 주행거리 <span class="hint">(km, 주유 후 달린 거리)</span></label>
+      <input type="number" id="f-trip" inputmode="decimal" placeholder="예: 210" step="any">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>주유량 <span class="hint">(L)</span></label>
+        <input type="number" id="f-liter" inputmode="decimal" placeholder="예: 10.5" step="any">
+      </div>
+      <div class="field">
+        <label>금액 <span class="hint">(원, 선택)</span></label>
+        <input type="number" id="f-cost" inputmode="numeric" placeholder="예: 18000" step="any">
+      </div>
+    </div>
+    <button type="submit" class="save-btn">＋ 기록 저장</button>
+  </form>
+
+  <!-- Records -->
+  <div class="list-head">
+    <h2>주유 기록</h2>
+    <span class="cnt" id="cnt">0건</span>
+  </div>
+  <div id="list"></div>
+
+  <div class="tip" id="tip"></div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const KEY = 'yeonbi_records_v1';
+const MODEKEY = 'yeonbi_mode_v1';
+let mode = localStorage.getItem(MODEKEY) || 'odo'; // 'odo' | 'trip'
+
+function load(){ try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]} }
+function save(a){ localStorage.setItem(KEY, JSON.stringify(a)) }
+
+// set today
+$('#f-date').value = new Date().toISOString().slice(0,10);
+
+// mode toggle
+function applyMode(){
+  document.querySelectorAll('#mode button').forEach(b=>b.classList.toggle('on', b.dataset.m===mode));
+  $('#wrap-odo').style.display = mode==='odo' ? '' : 'none';
+  $('#wrap-trip').style.display = mode==='trip' ? '' : 'none';
+  $('#tip').innerHTML = mode==='odo'
+    ? '💡 <b>계기판 총거리</b> 모드예요. 계기판에 뜨는 누적 km를 그대로 적으면, 지난 기록과의 차이로 연비를 자동 계산해요. 첫 기록은 <b>기준점</b>이 됩니다.'
+    : '💡 <b>구간거리(트립)</b> 모드예요. 주유할 때마다 0으로 리셋되는 트립 거리를 적으면 바로 연비가 나와요.';
+  render();
+}
+document.querySelectorAll('#mode button').forEach(b=>{
+  b.onclick = ()=>{ mode=b.dataset.m; localStorage.setItem(MODEKEY,mode); applyMode(); };
+});
+
+// add record
+$('#form').addEventListener('submit', e=>{
+  e.preventDefault();
+  const date = $('#f-date').value;
+  const liter = parseFloat($('#f-liter').value);
+  const cost = parseFloat($('#f-cost').value) || 0;
+  if(!date || !(liter>0)){ alert('날짜와 주유량(L)은 꼭 입력해 주세요.'); return; }
+
+  const rec = { id: Date.now(), date, liter, cost };
+  if(mode==='odo'){
+    const odo = parseFloat($('#f-odo').value);
+    if(!(odo>0)){ alert('계기판 총 주행거리(km)를 입력해 주세요.'); return; }
+    rec.odo = odo;
+  }else{
+    const trip = parseFloat($('#f-trip').value);
+    if(!(trip>0)){ alert('이번 구간 주행거리(km)를 입력해 주세요.'); return; }
+    rec.trip = trip;
+  }
+  const a = load(); a.push(rec); save(a);
+  // reset inputs (keep date as today for convenience)
+  $('#f-odo').value=''; $('#f-trip').value=''; $('#f-liter').value=''; $('#f-cost').value='';
+  $('#f-date').value = new Date().toISOString().slice(0,10);
+  render();
+});
+
+function del(id){
+  if(!confirm('이 기록을 삭제할까요?')) return;
+  save(load().filter(r=>r.id!==id));
+  render();
+}
+
+function fmt(n, d=0){
+  if(!isFinite(n)) return '—';
+  return n.toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});
+}
+
+function render(){
+  const a = load();
+  let rows = [], totDist=0, totFuelCounted=0, totFuelAll=0, totCost=0;
+
+  if(mode==='odo'){
+    // sort by odometer ascending as source of truth for distance
+    const sorted = [...a].sort((x,y)=> x.odo - y.odo);
+    sorted.forEach((r,i)=>{
+      totCost += r.cost; totFuelAll += r.liter;
+      if(i===0){
+        rows.push({r, eff:null, base:true, dist:null});
+      }else{
+        const dist = r.odo - sorted[i-1].odo;
+        const eff = dist>0 ? dist/r.liter : null;
+        totDist += dist>0?dist:0;
+        totFuelCounted += r.liter;
+        rows.push({r, eff, base:false, dist});
+      }
+    });
+    var avg = totFuelCounted>0 ? totDist/totFuelCounted : NaN;
+  }else{
+    a.forEach(r=>{
+      totCost += r.cost; totFuelAll += r.liter; totDist += r.trip; totFuelCounted += r.liter;
+      const eff = r.trip/r.liter;
+      rows.push({r, eff, base:false, dist:r.trip});
+    });
+    var avg = totFuelCounted>0 ? totDist/totFuelCounted : NaN;
+  }
+
+  // dashboard
+  $('#avg').textContent = isFinite(avg) ? fmt(avg,1) : '—';
+  $('#totDist').textContent = fmt(totDist,0);
+  $('#totFuel').textContent = fmt(totFuelAll,1);
+  $('#totCost').textContent = fmt(totCost,0);
+  $('#cnt').textContent = a.length+'건';
+
+  // list — newest date first (reverse of chronological)
+  const listEl = $('#list');
+  if(rows.length===0){
+    listEl.innerHTML = '<div class="card empty">아직 기록이 없어요.<br>위에서 첫 주유를 기록해 보세요 ⛽</div>';
+    return;
+  }
+  rows.reverse();
+  listEl.innerHTML = rows.map(x=>{
+    const r=x.r;
+    const md = r.date.slice(5).replace('-','.');
+    const distTxt = x.dist!=null ? `${fmt(x.dist,0)}km 주행` : '기준점';
+    const costTxt = r.cost>0 ? ` · ${fmt(r.cost,0)}원` : '';
+    const effHtml = x.base
+      ? `<div class="v base">기준점</div><div class="u">첫 기록</div>`
+      : (x.eff!=null && isFinite(x.eff)
+          ? `<div class="v">${fmt(x.eff,1)}</div><div class="u">km/L</div>`
+          : `<div class="v base">—</div><div class="u">거리확인</div>`);
+    return `<div class="card rec">
+      <div class="date">${md}</div>
+      <div class="mid">
+        <div class="l1">${fmt(r.liter,1)}L 주유${costTxt}</div>
+        <div class="l2">${distTxt}${r.odo?` · 계기판 ${fmt(r.odo,0)}km`:''}</div>
+      </div>
+      <div class="eff">${effHtml}</div>
+      <button class="del" onclick="del(${r.id})">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+applyMode();
+</script>
+</body>
+</html>
